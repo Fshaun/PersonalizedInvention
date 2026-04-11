@@ -1,0 +1,6 @@
+@PersonalizedInvention.API_HostAddress = http://localhost:5183
+
+GET {{PersonalizedInvention.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
