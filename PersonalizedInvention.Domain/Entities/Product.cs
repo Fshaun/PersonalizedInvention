@@ -13,7 +13,7 @@ namespace PersonalizedInvention.Domain.Entities
         public int Stock { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
         public string Category { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; }
 
         // Computed property — no database column needed
         public bool IsInStock => Stock > 0;
