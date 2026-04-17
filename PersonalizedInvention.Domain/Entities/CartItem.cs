@@ -10,7 +10,7 @@ namespace PersonalizedInvention.Domain.Entities
         public int UserId { get; set; }
         public int ProductId { get; set; }
         public int Quantity { get; set; }
-        public DateTime AddedAt { get; set; } = DateTime.UtcNow;
+        public DateTime AddedAt { get; set; }
 
         // Navigation properties — lets EF Core JOIN tables automatically
         public User User { get; set; } = null!;
