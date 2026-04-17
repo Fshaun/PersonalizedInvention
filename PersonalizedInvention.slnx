@@ -1,6 +1,4 @@
 <Solution>
-  <Folder Name="/PersonalizedInvention.Client/" />
-  <Folder Name="/PersonalizedInvention.Server/" />
   <Project Path="PersonalizedInvention.API/PersonalizedInvention.API.csproj" />
   <Project Path="PersonalizedInvention.Application/PersonalizedInvention.Application.csproj" />
   <Project Path="PersonalizedInvention.Domain/PersonalizedInvention.Domain.csproj" />
