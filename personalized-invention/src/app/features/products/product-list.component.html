@@ -1,0 +1,54 @@
+<div class="pi-shop">
+  <div class="pi-shop__header">
+    <h1>Our Products</h1>
+    <p>Handcrafted, personalized items made just for you</p>
+  </div>
+
+  <!-- Filters -->
+  <div class="pi-shop__filters">
+    <div class="pi-shop__categories">
+      @for (cat of categories; track cat) {
+        <button
+          [class.active]="selectedCategory === cat"
+          (click)="filterByCategory(cat)"
+          class="pi-filter-btn">
+          {{ cat }}
+        </button>
+      }
+    </div>
+    <label class="pi-toggle">
+      <input type="checkbox" (change)="toggleInStock()" [checked]="showInStockOnly">
+      <span>In Stock Only</span>
+    </label>
+  </div>
+
+  <!-- Loading state -->
+  @if (isLoading) {
+    <div class="pi-shop__loading">
+      <div class="pi-spinner"></div>
+      <p>Loading products...</p>
+    </div>
+  }
+
+  <!-- Error state -->
+  @if (errorMessage) {
+    <div class="pi-shop__error">
+      <p>⚠️ {{ errorMessage }}</p>
+      <button (click)="loadProducts()">Try Again</button>
+    </div>
+  }
+
+  <!-- Product grid -->
+  @if (!isLoading && !errorMessage) {
+    <div class="pi-shop__grid">
+      @for (product of filteredProducts; track product.id) {
+        <app-product-card [product]="product"></app-product-card>
+      }
+      @if (filteredProducts.length === 0) {
+        <div class="pi-shop__empty">
+          <p>No products found for this filter.</p>
+        </div>
+      }
+    </div>
+  }
+</div>

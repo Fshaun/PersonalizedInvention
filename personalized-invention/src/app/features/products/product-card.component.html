@@ -1,0 +1,33 @@
+<div class="pi-card" [class.pi-card--out-of-stock]="!product.isInStock">
+  <div class="pi-card__image-wrap">
+    <img [src]="product.imageUrl" [alt]="product.name" class="pi-card__image" />
+    <span class="pi-card__badge" [class.pi-card__badge--out]="!product.isInStock">
+      {{ product.isInStock ? 'In Stock' : 'Out of Stock' }}
+    </span>
+    <span class="pi-card__category">{{ product.category }}</span>
+  </div>
+
+  <div class="pi-card__body">
+    <h3 class="pi-card__name">{{ product.name }}</h3>
+    <p class="pi-card__desc">{{ product.description }}</p>
+
+    <div class="pi-card__footer">
+      <span class="pi-card__price">R{{ product.price | number:'1.2-2' }}</span>
+
+      @if (!addedToCart) {
+        <button
+          class="pi-card__btn"
+          [disabled]="!product.isInStock || isAdding"
+          (click)="addToCart()">
+          {{ isAdding ? 'Adding...' : (product.isInStock ? 'Add to Cart' : 'Unavailable') }}
+        </button>
+      }
+
+      @if (addedToCart) {
+        <button class="pi-card__btn pi-card__btn--added" (click)="goToCart()">
+          ✓ View Cart
+        </button>
+      }
+    </div>
+  </div>
+</div>

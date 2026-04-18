@@ -1,0 +1,39 @@
+<div class="pi-checkout">
+  <h1>Checkout</h1>
+
+  @if (isLoading) {
+    <div class="pi-checkout__loading">
+      <div class="pi-spinner"></div>
+      <p>Setting up your checkout...</p>
+    </div>
+  }
+
+  @if (errorMessage && !isLoading) {
+    <div class="pi-checkout__error">
+      <p>⚠️ {{ errorMessage }}</p>
+      <button (click)="router.navigate(['/cart'])">Back to Cart</button>
+    </div>
+  }
+
+  @if (successMessage) {
+    <div class="pi-checkout__success">
+      <p>{{ successMessage }}</p>
+      <p>Redirecting to home...</p>
+    </div>
+  }
+
+  @if (!isLoading && !errorMessage && !successMessage) {
+    <div class="pi-checkout__form">
+      <div class="pi-checkout__summary">
+        <h2>Order Total: <span>R{{ orderTotal | number:'1.2-2' }}</span></h2>
+      </div>
+      <div id="payment-element" class="pi-checkout__stripe"></div>
+      <button
+        class="pi-checkout__pay-btn"
+        [disabled]="isProcessing"
+        (click)="confirmPayment()">
+        {{ isProcessing ? 'Processing...' : 'Pay R' + (orderTotal | number:'1.2-2') }}
+      </button>
+    </div>
+  }
+</div>
