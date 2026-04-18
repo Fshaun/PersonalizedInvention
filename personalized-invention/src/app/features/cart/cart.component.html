@@ -1,0 +1,69 @@
+<div class="pi-cart">
+  <h1 class="pi-cart__title">Your Cart</h1>
+
+  @if (isLoading) {
+    <div class="pi-cart__loading">Loading cart...</div>
+  }
+
+  @if (!isLoading && cartItems.length === 0) {
+    <div class="pi-cart__empty">
+      <p>🛒 Your cart is empty.</p>
+      <button class="pi-btn pi-btn--primary" (click)="continueShopping()">
+        Browse Products
+      </button>
+    </div>
+  }
+
+  @if (!isLoading && cartItems.length > 0) {
+    <div class="pi-cart__content">
+      <div class="pi-cart__items">
+        @for (item of cartItems; track item.id) {
+          <div class="pi-cart__item">
+            <img [src]="item.productImageUrl" [alt]="item.productName" class="pi-cart__item-img" />
+
+            <div class="pi-cart__item-info">
+              <h3>{{ item.productName }}</h3>
+              <p class="pi-cart__item-price">R{{ item.unitPrice | number:'1.2-2' }} each</p>
+            </div>
+
+            <div class="pi-cart__item-qty">
+              <button (click)="updateQuantity(item.productId, item.quantity - 1)">−</button>
+              <span>{{ item.quantity }}</span>
+              <button (click)="updateQuantity(item.productId, item.quantity + 1)">+</button>
+            </div>
+
+            <div class="pi-cart__item-subtotal">
+              R{{ item.subtotal | number:'1.2-2' }}
+            </div>
+
+            <button class="pi-cart__item-remove"
+                    (click)="removeItem(item.productId)"
+                    title="Remove">✕</button>
+          </div>
+        }
+      </div>
+
+      <div class="pi-cart__summary">
+        <h2>Order Summary</h2>
+        <div class="pi-cart__summary-row">
+          <span>Subtotal</span><span>R{{ total | number:'1.2-2' }}</span>
+        </div>
+        <div class="pi-cart__summary-row">
+          <span>Shipping</span><span>Free</span>
+        </div>
+        <div class="pi-cart__summary-row pi-cart__summary-row--total">
+          <span>Total</span><span>R{{ total | number:'1.2-2' }}</span>
+        </div>
+        <button class="pi-btn pi-btn--primary pi-btn--full" (click)="proceedToCheckout()">
+          Proceed to Checkout
+        </button>
+        <button class="pi-btn pi-btn--ghost pi-btn--full" (click)="continueShopping()">
+          Continue Shopping
+        </button>
+        <button class="pi-btn pi-btn--danger pi-btn--full" (click)="clearCart()">
+          Clear Cart
+        </button>
+      </div>
+    </div>
+  }
+</div>
