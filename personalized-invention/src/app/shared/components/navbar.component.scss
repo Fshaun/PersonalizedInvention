@@ -27,16 +27,12 @@
     font-size: 14px;
   }
 
-  &__name {
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-  }
+  &__name { font-size: 18px; font-weight: 600; letter-spacing: 0.5px; }
 
   &__links {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 1.5rem;
 
     a {
       color: #ccc;
@@ -68,5 +64,44 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__greeting {
+    color: #ccc;
+    font-size: 14px;
+  }
+
+  &__logout {
+    background: transparent;
+    border: 1px solid #555;
+    color: #ccc;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: #e94560;
+      color: #e94560;
+    }
+  }
+
+  &__auth-link { color: #ccc !important; }
+
+  &__auth-btn {
+    background: #e94560 !important;
+    color: #fff !important;
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+
+    &:hover { background: #c73652 !important; }
   }
 }
