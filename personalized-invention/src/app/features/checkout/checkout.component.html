@@ -1,39 +1,104 @@
 <div class="pi-checkout">
-  <h1>Checkout</h1>
 
-  @if (isLoading) {
-    <div class="pi-checkout__loading">
+  <!-- Loading -->
+  @if (step === 'loading') {
+    <div class="pi-checkout__state">
       <div class="pi-spinner"></div>
       <p>Setting up your checkout...</p>
     </div>
   }
 
-  @if (errorMessage && !isLoading) {
-    <div class="pi-checkout__error">
-      <p>⚠️ {{ errorMessage }}</p>
-      <button (click)="router.navigate(['/cart'])">Back to Cart</button>
-    </div>
-  }
-
-  @if (successMessage) {
-    <div class="pi-checkout__success">
-      <p>{{ successMessage }}</p>
-      <p>Redirecting to home...</p>
-    </div>
-  }
-
-  @if (!isLoading && !errorMessage && !successMessage) {
-    <div class="pi-checkout__form">
-      <div class="pi-checkout__summary">
-        <h2>Order Total: <span>R{{ orderTotal | number:'1.2-2' }}</span></h2>
+  <!-- Error -->
+  @if (step === 'error') {
+    <div class="pi-checkout__state pi-checkout__state--error">
+      <div class="pi-checkout__icon">⚠️</div>
+      <h2>Something went wrong</h2>
+      <p>{{ errorMessage }}</p>
+      <div class="pi-checkout__actions">
+        <button class="pi-btn pi-btn--outline" (click)="router.navigate(['/cart'])">
+          Back to Cart
+        </button>
+        <button class="pi-btn pi-btn--primary" (click)="initCheckout()">
+          Try Again
+        </button>
       </div>
-      <div id="payment-element" class="pi-checkout__stripe"></div>
-      <button
-        class="pi-checkout__pay-btn"
-        [disabled]="isProcessing"
-        (click)="confirmPayment()">
-        {{ isProcessing ? 'Processing...' : 'Pay R' + (orderTotal | number:'1.2-2') }}
-      </button>
     </div>
   }
+
+  <!-- Success -->
+  @if (step === 'success') {
+    <div class="pi-checkout__state pi-checkout__state--success">
+      <div class="pi-checkout__icon">🎉</div>
+      <h2>Payment successful!</h2>
+      <p>Your order has been confirmed. Redirecting you to the shop...</p>
+    </div>
+  }
+
+  <!-- Payment form -->
+  @if (step === 'payment' || step === 'processing') {
+    <div class="pi-checkout__layout">
+
+      <!-- Left: order summary -->
+      <div class="pi-checkout__summary">
+        <h2>Order Summary</h2>
+
+        @if (order) {
+          <div class="pi-checkout__items">
+            @for (item of order.orderItems; track item.productId) {
+              <div class="pi-checkout__item">
+                <span class="pi-checkout__item-name">{{ item.productName }}</span>
+                <span class="pi-checkout__item-qty">× {{ item.quantity }}</span>
+                <span class="pi-checkout__item-price">
+                  R{{ (item.unitPrice * item.quantity) | number:'1.2-2' }}
+                </span>
+              </div>
+            }
+          </div>
+
+          <div class="pi-checkout__divider"></div>
+
+          <div class="pi-checkout__total">
+            <span>Total</span>
+            <span class="pi-checkout__total-amount">
+              R{{ orderTotal | number:'1.2-2' }}
+            </span>
+          </div>
+        }
+      </div>
+
+      <!-- Right: Stripe payment form -->
+      <div class="pi-checkout__payment">
+        <h2>Payment Details</h2>
+
+        <!-- Stripe mounts its form here -->
+        <div id="stripe-payment-element" class="pi-checkout__stripe-form"></div>
+
+        @if (errorMessage) {
+          <div class="pi-checkout__error-msg">⚠️ {{ errorMessage }}</div>
+        }
+
+        <button
+          class="pi-btn pi-btn--primary pi-btn--full"
+          [disabled]="step === 'processing'"
+          (click)="pay()">
+          @if (step === 'processing') {
+            <span class="pi-btn__spinner"></span>
+            Processing...
+          } @else {
+            Pay R{{ orderTotal | number:'1.2-2' }}
+          }
+        </button>
+
+        <p class="pi-checkout__secure">
+          🔒 Secured by Stripe. We never store your card details.
+        </p>
+
+        <!-- Test card hint (remove in production) -->
+        <div class="pi-checkout__test-hint">
+          <strong>Test card:</strong> 4242 4242 4242 4242 · any future date · any CVC
+        </div>
+      </div>
+    </div>
+  }
+
 </div>
