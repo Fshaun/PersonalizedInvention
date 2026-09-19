@@ -1,0 +1,73 @@
+<div class="pi-auth">
+  <div class="pi-auth__card">
+    <div class="pi-auth__logo">
+      <span class="pi-auth__logo-badge">PI</span>
+      <h1>Personalized Invention</h1>
+    </div>
+
+    <h2>Create an account</h2>
+    <p class="pi-auth__subtitle">Join us and start shopping</p>
+
+    @if (errorMessage) {
+      <div class="pi-auth__error">⚠️ {{ errorMessage }}</div>
+    }
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="pi-auth__field">
+        <label for="fullName">Full name</label>
+        <input
+          id="fullName"
+          type="text"
+          [(ngModel)]="fullName"
+          name="fullName"
+          placeholder="Mashudu Surname"
+          required />
+      </div>
+
+      <div class="pi-auth__field">
+        <label for="email">Email address</label>
+        <input
+          id="email"
+          type="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="you@example.com"
+          autocomplete="email"
+          required />
+      </div>
+
+      <div class="pi-auth__field">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="At least 6 characters"
+          autocomplete="new-password"
+          required />
+      </div>
+
+      <div class="pi-auth__field">
+        <label for="confirmPassword">Confirm password</label>
+        <input
+          id="confirmPassword"
+          type="password"
+          [(ngModel)]="confirmPassword"
+          name="confirmPassword"
+          placeholder="Repeat your password"
+          autocomplete="new-password"
+          required />
+      </div>
+
+      <button type="submit" class="pi-auth__btn" [disabled]="isLoading">
+        {{ isLoading ? 'Creating account...' : 'Create Account' }}
+      </button>
+    </form>
+
+    <p class="pi-auth__switch">
+      Already have an account?
+      <a routerLink="/login">Sign in here</a>
+    </p>
+  </div>
+</div>
