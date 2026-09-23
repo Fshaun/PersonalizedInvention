@@ -7,6 +7,7 @@ namespace PersonalizedInvention.Domain.Interfaces
 {
     public interface IOrderRepository
     {
+        Task<IEnumerable<Order>> GetAllOrdersAsync();
         Task<IEnumerable<Order>> GetOrdersByUserIdAsync(int userId);
         Task<Order?> GetByIdAsync(int id);
         Task<Order> CreateAsync(Order order);

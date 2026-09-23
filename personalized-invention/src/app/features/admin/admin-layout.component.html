@@ -1,0 +1,32 @@
+<div class="pi-admin">
+  <!-- Sidebar -->
+  <aside class="pi-admin__sidebar">
+    <div class="pi-admin__brand">
+      <span class="pi-admin__logo">PI</span>
+      <span>Admin Panel</span>
+    </div>
+
+    <nav class="pi-admin__nav">
+      <a routerLink="/admin/products"
+         routerLinkActive="active"
+         class="pi-admin__nav-item">
+        📦 Products
+      </a>
+      <a routerLink="/admin/orders"
+         routerLinkActive="active"
+         class="pi-admin__nav-item">
+        🧾 Orders
+      </a>
+    </nav>
+
+    <div class="pi-admin__sidebar-footer">
+      <a routerLink="/" class="pi-admin__nav-item">← Back to Shop</a>
+      <button class="pi-admin__logout" (click)="logout()">Logout</button>
+    </div>
+  </aside>
+
+  <!-- Main content area -->
+  <main class="pi-admin__main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

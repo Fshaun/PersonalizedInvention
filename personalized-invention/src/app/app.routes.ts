@@ -5,7 +5,11 @@ import { CheckoutComponent } from './features/checkout/checkout.component';
 import { LoginComponent } from './features/auth/login.component';
 import { RegisterComponent } from './features/auth/register.component';
 import { OrdersComponent } from './features/orders/orders.component';
+import { AdminLayoutComponent } from './features/admin/admin-layout.component';
+import { AdminProductsComponent } from './features/admin/admin-products.component';
+import { AdminOrdersComponent } from './features/admin/admin-orders.component';
 import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   { path: '',         component: ProductListComponent },
@@ -22,9 +26,19 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'orders',             // ← new
+    path: 'orders',
     component: OrdersComponent,
-    canActivate: [authGuard]    // ← must be logged in
+    canActivate: [authGuard]
+  },
+  {
+    path: 'admin',
+    component: AdminLayoutComponent,
+    canActivate: [adminGuard],          // ← only admins
+    children: [
+      { path: '',         redirectTo: 'products', pathMatch: 'full' },
+      { path: 'products', component: AdminProductsComponent },
+      { path: 'orders',   component: AdminOrdersComponent }
+    ]
   },
   { path: '**', redirectTo: '' }
 ];

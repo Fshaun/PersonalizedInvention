@@ -16,6 +16,12 @@
     @if (currentUser) {
       <a routerLink="/orders" routerLinkActive="active">My Orders</a>
 
+      @if (currentUser.isAdmin) {
+        <a routerLink="/admin" routerLinkActive="active" class="pi-nav__admin-link">
+          ⚙ Admin
+        </a>
+      }
+
       <a routerLink="/cart" routerLinkActive="active" class="pi-nav__cart">
         <span class="pi-nav__cart-icon">🛒</span>
         @if (cartCount > 0) {
@@ -33,9 +39,7 @@
       <a routerLink="/login" routerLinkActive="active" class="pi-nav__auth-link">
         Sign In
       </a>
-      <a routerLink="/register" class="pi-nav__auth-btn">
-        Register
-      </a>
+      <a routerLink="/register" class="pi-nav__auth-btn">Register</a>
     }
   </div>
 </nav>

@@ -10,6 +10,7 @@ namespace PersonalizedInvention.Domain.Entities
         public string FullName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
+        public bool IsAdmin { get; set; } = false;
         public DateTime CreatedAt { get; set; }
 
         // Navigation properties — EF Core uses these to build foreign keys

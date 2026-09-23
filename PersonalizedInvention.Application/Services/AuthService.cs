@@ -25,11 +25,9 @@ namespace PersonalizedInvention.Application.Services
 
         public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
         {
-            // Check if email already exists
             if (await _userRepository.EmailExistsAsync(dto.Email))
                 throw new InvalidOperationException("An account with this email already exists.");
 
-            // Hash the password — never store plain text passwords
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
             var user = new User
@@ -37,29 +35,25 @@ namespace PersonalizedInvention.Application.Services
                 FullName = dto.FullName,
                 Email = dto.Email.ToLower().Trim(),
                 PasswordHash = passwordHash,
+                IsAdmin = false,
                 CreatedAt = DateTime.UtcNow
             };
 
             var created = await _userRepository.CreateAsync(user);
             var token = GenerateJwtToken(created);
-
             return BuildResponse(created, token);
         }
 
         public async Task<AuthResponseDto> LoginAsync(LoginDto dto)
         {
-            // Find user by email
             var user = await _userRepository.GetByEmailAsync(dto.Email);
 
-            // Verify password against stored hash
             if (user is null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
                 throw new UnauthorizedAccessException("Invalid email or password.");
 
             var token = GenerateJwtToken(user);
             return BuildResponse(user, token);
         }
-
-        // ── Private helpers ───────────────────────────────────────────────
 
         private string GenerateJwtToken(User user)
         {
@@ -71,14 +65,13 @@ namespace PersonalizedInvention.Application.Services
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            // Claims are pieces of data stored inside the token
-            // Angular reads these to know who the user is
             var claims = new[]
             {
             new Claim(JwtRegisteredClaimNames.Sub,   user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(ClaimTypes.Name,               user.FullName),
-            new Claim("userId",                      user.Id.ToString())
+            new Claim("userId",                      user.Id.ToString()),
+            new Claim("isAdmin",                     user.IsAdmin.ToString().ToLower()) // ← new
         };
 
             var token = new JwtSecurityToken(
@@ -97,6 +90,7 @@ namespace PersonalizedInvention.Application.Services
             UserId = user.Id,
             FullName = user.FullName,
             Email = user.Email,
+            IsAdmin = user.IsAdmin,    // ← new
             Token = token,
             ExpiresAt = DateTime.UtcNow.AddDays(7)
         };
