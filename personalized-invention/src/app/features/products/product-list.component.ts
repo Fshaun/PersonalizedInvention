@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '../../core/services/product.service';
-import { Product } from '../../core/models/product.model';
+import { PRODUCT_CATEGORIES, Product } from '../../core/models/product.model';
 import { ProductCardComponent } from './product-card.component';
 
 @Component({
@@ -35,17 +35,7 @@ export class ProductListComponent implements OnInit {
       next: (products) => {
         this.products = products;
         this.filteredProducts = products;
-        this.categories = [
-          'All',
-          'Notebook',
-          'Keyholder',
-          'Frame',
-          'Letter',
-          'Board',
-          'Family Tree',
-          'Badge',
-          'Bottle'
-        ];
+        this.categories = ['All', ...PRODUCT_CATEGORIES];
         this.isLoading = false;
       },
       error: (err) => {

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService, AdminProduct, ProductFormData } from '../../core/services/admin.service';
+import { PRODUCT_CATEGORIES } from '../../core/models/product.model';
 
 type PanelMode = 'none' | 'create' | 'edit';
 
@@ -25,7 +26,7 @@ export class AdminProductsComponent implements OnInit {
 
   form: ProductFormData = this.emptyForm();
 
-  categories = ['Drinkware', 'Art', 'Accessories', 'Clothing', 'Stationery', 'Other'];
+  categories = PRODUCT_CATEGORIES;
 
   constructor(private adminService: AdminService) {}
 
