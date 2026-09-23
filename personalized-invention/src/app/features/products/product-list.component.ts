@@ -35,7 +35,17 @@ export class ProductListComponent implements OnInit {
       next: (products) => {
         this.products = products;
         this.filteredProducts = products;
-        this.categories = ['All', ...new Set(products.map(p => p.category))];
+        this.categories = [
+          'All',
+          'Notebook',
+          'Keyholder',
+          'Frame',
+          'Letter',
+          'Board',
+          'Family Tree',
+          'Badge',
+          'Bottle'
+        ];
         this.isLoading = false;
       },
       error: (err) => {
