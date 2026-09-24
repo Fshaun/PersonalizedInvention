@@ -37,37 +37,40 @@ namespace PersonalizedInvention.Application.Services
             return order is null ? null : MapToDto(order);
         }
 
-        public async Task<OrderDto> CreateOrderFromCartAsync(int userId)
+        public async Task<OrderDto> CreateOrderFromCartAsync(int userId, DeliveryAddressDto address)
         {
-            // Step 1: get cart items
             var cartItems = (await _cartRepository.GetCartItemsByUserIdAsync(userId)).ToList();
             if (!cartItems.Any())
                 throw new InvalidOperationException("Cart is empty.");
 
-            // Step 2: build order items and calculate total
             var orderItems = cartItems.Select(ci => new OrderItem
             {
                 ProductId = ci.ProductId,
                 Quantity = ci.Quantity,
-                UnitPrice = ci.Product.Price  // Lock price at time of order
+                UnitPrice = ci.Product.Price
             }).ToList();
 
             var total = orderItems.Sum(oi => oi.UnitPrice * oi.Quantity);
 
-            // Step 3: create the order
             var order = new Order
             {
                 UserId = userId,
                 TotalAmount = total,
                 Status = OrderStatus.Pending,
-                OrderItems = orderItems
+                OrderItems = orderItems,
+
+                // ── Save delivery address ──────────────────────
+                DeliveryFullName = address.FullName,
+                DeliveryPhone = address.Phone,
+                DeliveryStreet = address.Street,
+                DeliveryCity = address.City,
+                DeliveryProvince = address.Province,
+                DeliveryPostalCode = address.PostalCode,
+                DeliveryCountry = address.Country
             };
 
             var created = await _orderRepository.CreateAsync(order);
-
-            // Step 4: clear the cart after order is placed
             await _cartRepository.ClearCartAsync(userId);
-
             return MapToDto(created);
         }
 
@@ -86,6 +89,16 @@ namespace PersonalizedInvention.Application.Services
             TotalAmount = o.TotalAmount,
             Status = o.Status.ToString(),
             CreatedAt = o.CreatedAt,
+            DeliveryAddress = new DeliveryAddressDto
+            {
+                FullName = o.DeliveryFullName,
+                Phone = o.DeliveryPhone,
+                Street = o.DeliveryStreet,
+                City = o.DeliveryCity,
+                Province = o.DeliveryProvince,
+                PostalCode = o.DeliveryPostalCode,
+                Country = o.DeliveryCountry
+            },
             OrderItems = o.OrderItems.Select(oi => new OrderItemDto
             {
                 ProductId = oi.ProductId,

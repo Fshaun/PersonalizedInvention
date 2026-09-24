@@ -14,7 +14,6 @@ namespace PersonalizedInvention.API.Controllers
 
         public OrdersController(IOrderService orderService) => _orderService = orderService;
 
-        // GET /api/orders/user/1
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetUserOrders(int userId)
         {
@@ -22,7 +21,6 @@ namespace PersonalizedInvention.API.Controllers
             return Ok(orders);
         }
 
-        // GET /api/orders/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -30,13 +28,13 @@ namespace PersonalizedInvention.API.Controllers
             return order is null ? NotFound() : Ok(order);
         }
 
-        // POST /api/orders/checkout/1
+        // ← Now accepts delivery address in the body
         [HttpPost("checkout/{userId}")]
-        public async Task<IActionResult> Checkout(int userId)
+        public async Task<IActionResult> Checkout(int userId, [FromBody] DeliveryAddressDto address)
         {
             try
             {
-                var order = await _orderService.CreateOrderFromCartAsync(userId);
+                var order = await _orderService.CreateOrderFromCartAsync(userId, address);
                 return CreatedAtAction(nameof(GetById), new { id = order.Id }, order);
             }
             catch (InvalidOperationException ex)

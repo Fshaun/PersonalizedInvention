@@ -11,7 +11,7 @@ namespace PersonalizedInvention.Application.Interfaces
     {
         Task<IEnumerable<OrderDto>> GetUserOrdersAsync(int userId);
         Task<OrderDto?> GetOrderByIdAsync(int id);
-        Task<OrderDto> CreateOrderFromCartAsync(int userId);
+        Task<OrderDto> CreateOrderFromCartAsync(int userId, DeliveryAddressDto address); // ← updated
         Task<bool> UpdateOrderStatusAsync(int orderId, OrderStatus status);
     }
 }

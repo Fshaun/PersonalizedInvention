@@ -4,7 +4,63 @@
   padding: 0 2rem;
   min-height: 60vh;
 
-  // ── States (loading, error, success) ──────────────────────────
+  &__title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0 0 0.25rem;
+  }
+
+  &__subtitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #444;
+    margin: 0 0 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  // ── Two column layout ──────────────────────────────────────
+  &__layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 2rem;
+    align-items: start;
+
+    @media (max-width: 768px) { grid-template-columns: 1fr; }
+  }
+
+  // ── Left: form section ─────────────────────────────────────
+  &__section {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  // ── Right: preview card ────────────────────────────────────
+  &__preview {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    position: sticky;
+    top: 80px;
+
+    h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0 0 1rem;
+    }
+  }
+
+  // ── States ──────────────────────────────────────────────────
   &__state {
     display: flex;
     flex-direction: column;
@@ -13,103 +69,16 @@
     padding: 5rem 2rem;
     text-align: center;
     gap: 1rem;
+    min-height: 50vh;
 
-    p { color: #888; font-size: 15px; }
-    h2 { font-size: 1.5rem; font-weight: 700; color: #1a1a2e; }
+    p  { color: #888; font-size: 15px; margin: 0; }
+    h2 { font-size: 1.5rem; font-weight: 700; color: #1a1a2e; margin: 0; }
 
-    &--error {
-      h2 { color: #dc2626; }
-      p  { color: #888; }
-    }
-
-    &--success {
-      h2 { color: #16a34a; }
-    }
+    &--success h2 { color: #16a34a; }
+    &--error   h2 { color: #dc2626; }
   }
 
   &__icon { font-size: 3rem; }
-
-  &__actions {
-    display: flex;
-    gap: 1rem;
-    margin-top: 0.5rem;
-  }
-
-  // ── Two-column layout ──────────────────────────────────────────
-  &__layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    align-items: start;
-
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  // ── Summary (left column) ──────────────────────────────────────
-  &__summary {
-    background: #fff;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-
-    h2 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #1a1a2e;
-      margin: 0 0 1.2rem;
-    }
-  }
-
-  &__items { display: flex; flex-direction: column; gap: 0.75rem; }
-
-  &__item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 14px;
-
-    &-name { flex: 1; color: #333; }
-    &-qty  { color: #888; min-width: 30px; }
-    &-price { font-weight: 600; color: #1a1a2e; }
-  }
-
-  &__divider {
-    height: 1px;
-    background: #f0f0f0;
-    margin: 1rem 0;
-  }
-
-  &__total {
-    display: flex;
-    justify-content: space-between;
-    font-size: 16px;
-    font-weight: 700;
-    color: #1a1a2e;
-
-    &-amount { color: #e94560; font-size: 18px; }
-  }
-
-  // ── Payment form (right column) ────────────────────────────────
-  &__payment {
-    background: #fff;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-
-    h2 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #1a1a2e;
-      margin: 0 0 1.2rem;
-    }
-  }
-
-  &__stripe-form {
-    min-height: 180px;
-    margin-bottom: 1.2rem;
-  }
 
   &__error-msg {
     background: #fef2f2;
@@ -125,22 +94,139 @@
     text-align: center;
     font-size: 12px;
     color: #aaa;
-    margin: 0.75rem 0 0;
+    margin: 0.5rem 0 0;
   }
 
   &__test-hint {
-    margin-top: 1rem;
-    padding: 10px 14px;
     background: #f0f9ff;
     border: 1px solid #bae6fd;
     border-radius: 8px;
+    padding: 10px 14px;
     font-size: 12px;
     color: #0369a1;
     text-align: center;
+    margin-bottom: 1rem;
   }
 }
 
-// ── Shared buttons ─────────────────────────────────────────────
+// ── Address preview ────────────────────────────────────────────
+.pi-address-preview {
+  p {
+    font-size: 14px;
+    color: #555;
+    margin: 0 0 4px;
+    line-height: 1.5;
+  }
+}
+
+.pi-address-confirm {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+
+  h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 0.5rem;
+  }
+
+  p {
+    font-size: 13px;
+    color: #555;
+    margin: 0 0 3px;
+  }
+}
+
+// ── Order summary (in payment step) ───────────────────────────
+.pi-order-summary {
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #555;
+    padding: 6px 0;
+    border-bottom: 1px solid #f5f5f5;
+  }
+
+  &__total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a2e;
+    padding: 10px 0 0;
+    margin-top: 4px;
+
+    span:last-child { color: #e94560; }
+  }
+}
+
+// ── Stripe card element ────────────────────────────────────────
+.pi-card-element-wrap {
+  margin-bottom: 1rem;
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 6px;
+  }
+}
+
+.pi-stripe-element {
+  padding: 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #fff;
+  transition: border-color 0.2s;
+
+  &:focus-within { border-color: #e94560; }
+}
+
+// ── Form fields ────────────────────────────────────────────────
+.pi-form-field {
+  margin-bottom: 1.1rem;
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 6px;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+    background: #fff;
+
+    &:focus { border-color: #e94560; }
+
+    &[readonly] {
+      background: #f8f8f8;
+      color: #888;
+      cursor: default;
+    }
+  }
+}
+
+.pi-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+// ── Buttons ────────────────────────────────────────────────────
 .pi-btn {
   padding: 0.8rem 1.5rem;
   border-radius: 8px;
@@ -150,15 +236,12 @@
   border: none;
   font-family: inherit;
   transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  margin-bottom: 0.6rem;
 
   &--primary {
-    background: #e94560;
+    background: #1a1a2e;
     color: #fff;
-    &:hover:not(:disabled) { background: #c73652; }
+    &:hover:not(:disabled) { background: #e94560; }
     &:disabled { background: #ccc; cursor: not-allowed; }
   }
 
@@ -169,18 +252,10 @@
     &:hover { background: #f5f5f5; }
   }
 
-  &--full { width: 100%; }
-
-  &__spinner {
-    width: 14px;
-    height: 14px;
-    border: 2px solid rgba(255,255,255,0.4);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-  }
+  &--full { width: 100%; display: block; }
 }
 
+// ── Spinner ────────────────────────────────────────────────────
 .pi-spinner {
   width: 40px;
   height: 40px;

@@ -1,177 +1,176 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { loadStripe, Stripe, StripeElements, StripePaymentElement } from '@stripe/stripe-js';
-import { firstValueFrom, isObservable, Observable } from 'rxjs';
+import { loadStripe, Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-js';
 import { OrderService } from '../../core/services/order.service';
 import { PaymentService } from '../../core/services/payment.service';
-import { Order } from '../../core/models/order.model';
+import { AuthService } from '../../core/services/auth.service';
+import { DeliveryAddress, Order } from '../../core/models/order.model';
 import { environment } from '../../../environments/environment';
 
-type CheckoutStep = 'loading' | 'payment' | 'processing' | 'success' | 'error';
+type CheckoutStep = 'address' | 'payment' | 'processing' | 'success' | 'error';
 
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss']
 })
 export class CheckoutComponent implements OnInit, OnDestroy {
-  step: CheckoutStep = 'loading';
+  step: CheckoutStep = 'address';
   errorMessage = '';
 
   order: Order | null = null;
   stripe: Stripe | null = null;
   elements: StripeElements | null = null;
-  paymentElement: StripePaymentElement | null = null;
-  clientSecret: string | null = null;
+  cardElement: StripeCardElement | null = null;
+
+  // SA provinces for the dropdown
+  readonly provinces = [
+    'Gauteng', 'Western Cape', 'KwaZulu-Natal', 'Eastern Cape',
+    'Limpopo', 'Mpumalanga', 'North West', 'Free State', 'Northern Cape'
+  ];
+
+  // Delivery address form — pre-fill name from logged-in user
+  address: DeliveryAddress = {
+    fullName:   '',
+    phone:      '',
+    street:     '',
+    city:       '',
+    province:   '',
+    postalCode: '',
+    country:    'South Africa'
+  };
 
   constructor(
     private orderService: OrderService,
     private paymentService: PaymentService,
+    private authService: AuthService,
     public router: Router
   ) {}
 
-  async ngOnInit(): Promise<void> {
-    await this.initCheckout();
+  ngOnInit(): void {
+    // Pre-fill name from the logged-in user's profile
+    const user = this.authService.currentUser;
+    if (user) {
+      this.address.fullName = user.fullName;
+    }
   }
 
   ngOnDestroy(): void {
-    // Clean up Stripe element when component is destroyed
-    this.paymentElement?.destroy();
+    this.cardElement?.destroy();
   }
 
-  async initCheckout(): Promise<void> {
-    try {
-      this.step = 'loading';
-      this.errorMessage = '';
+  // ── Step 1: Validate address and move to payment ──────────────
+  async proceedToPayment(): Promise<void> {
+    if (!this.validateAddress()) return;
 
-      // Step 1 — create the order from the cart
-      this.order = await this.requestWithTimeout(
-        this.orderService.checkout(),
-        'Creating your order',
-        15000
-      );
+    this.step = 'payment' as any;
+    this.errorMessage = '';
+
+    try {
+      // Create the order with the delivery address
+      this.order = await this.orderService
+        .checkout(this.address)
+        .toPromise() ?? null;
+
       if (!this.order) throw new Error('Failed to create order.');
 
-      // Step 2 — ask the API to create a Stripe PaymentIntent
-      const intent = await this.requestWithTimeout(
-        this.paymentService.createPaymentIntent(this.order.id, this.order.totalAmount),
-        'Initialising Stripe payment',
-        15000
-      );
+      // Create Stripe PaymentIntent
+      const intent = await this.paymentService
+        .createPaymentIntent(this.order.id, this.order.totalAmount)
+        .toPromise();
+
       if (!intent) throw new Error('Failed to initialise payment.');
 
-      this.clientSecret = intent.clientSecret;
+      // Load Stripe and mount card element
+      this.stripe = await loadStripe(environment.stripePublishableKey);
+      if (!this.stripe) throw new Error('Stripe failed to load.');
 
-      // Step 3 — load Stripe.js with your publishable key
-      this.stripe = await this.requestWithTimeout(
-        loadStripe(environment.stripePublishableKey),
-        'Loading Stripe',
-        15000
-      );
-      if (!this.stripe) throw new Error('Stripe failed to load. Check your publishable key.');
-
-      // Step 4 — create the Stripe Elements and mount the payment form
-      this.elements = this.stripe.elements({
-        clientSecret: this.clientSecret,
-        appearance: {
-          theme: 'stripe',
-          variables: {
-            colorPrimary: '#e94560',
-            colorBackground: '#ffffff',
-            colorText: '#1a1a2e',
-            borderRadius: '8px'
-          }
-        }
-      });
-
-      const cardElement = this.elements.create('card', {
+      this.elements = this.stripe.elements();
+      this.cardElement = this.elements.create('card', {
         style: {
           base: {
             fontSize: '16px',
             color: '#1a1a2e',
+            fontFamily: 'Segoe UI, sans-serif',
             '::placeholder': { color: '#aab7c4' }
-          }
+          },
+          invalid: { color: '#e94560' }
         }
       });
 
       setTimeout(() => {
-        cardElement.mount('#stripe-payment-element');
-        this.step = 'payment';
+        this.cardElement?.mount('#stripe-card-element');
       }, 100);
+
     } catch (err: any) {
-      const message = err?.message || 'The checkout could not be initialised.';
-      this.errorMessage = message;
+      this.errorMessage = err.message;
       this.step = 'error';
     }
   }
 
+  // ── Step 2: Confirm payment ────────────────────────────────────
   async pay(): Promise<void> {
-    if (!this.stripe || !this.elements || !this.order) return;
+    if (!this.stripe || !this.cardElement || !this.order) return;
 
     this.step = 'processing';
     this.errorMessage = '';
 
-    // Get the card element
-    const cardElement = this.elements.getElement('card');
-    if (!cardElement) {
-      this.errorMessage = 'Card element not found.';
+    const intent = await this.paymentService
+      .createPaymentIntent(this.order.id, this.order.totalAmount)
+      .toPromise();
+
+    if (!intent) {
+      this.errorMessage = 'Could not initialise payment.';
       this.step = 'payment';
       return;
     }
 
-    try {
-      if (!this.clientSecret) {
-        this.errorMessage = 'Payment session is not ready. Please try again.';
-        this.step = 'payment';
-        return;
-      }
+    const { error, paymentIntent } = await this.stripe.confirmCardPayment(
+      intent.clientSecret,
+      { payment_method: { card: this.cardElement } }
+    );
 
-      const { error, paymentIntent } = await this.stripe.confirmCardPayment(
-        this.clientSecret,
-        { payment_method: { card: cardElement } }
-      );
-
-      if (error) {
-        this.errorMessage = error.message ?? 'Payment failed.';
-        this.step = 'payment';
-        return;
-      }
-
-      if (paymentIntent?.status === 'succeeded') {
-        await this.requestWithTimeout(
-          this.paymentService.confirmPayment(paymentIntent.id, this.order.id),
-          'Confirming payment',
-          15000
-        );
-
-        this.step = 'success';
-        setTimeout(() => this.router.navigate(['/']), 3000);
-      }
-    } catch (err: any) {
-      this.errorMessage = err?.message || 'Payment failed. Please try again.';
+    if (error) {
+      this.errorMessage = error.message ?? 'Payment failed. Please try again.';
       this.step = 'payment';
+      return;
+    }
+
+    if (paymentIntent?.status === 'succeeded') {
+      await this.paymentService
+        .confirmPayment(paymentIntent.id, this.order.id)
+        .toPromise();
+
+      this.step = 'success';
+      setTimeout(() => this.router.navigate(['/orders']), 3000);
     }
   }
 
-  private async requestWithTimeout<T>(
-    request: Promise<T> | Observable<T>,
-    label: string,
-    timeoutMs: number = 15000
-  ): Promise<T> {
-    const requestPromise = isObservable(request) ? firstValueFrom(request) : request;
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => {
-        reject(new Error(`${label} timed out. Check that the backend API is running.`));
-      }, timeoutMs);
-    });
-
-    return await Promise.race([requestPromise, timeoutPromise]);
+  goBackToAddress(): void {
+    this.cardElement?.destroy();
+    this.cardElement = null;
+    this.step = 'address';
   }
 
   get orderTotal(): number {
     return this.order?.totalAmount ?? 0;
+  }
+
+  private validateAddress(): boolean {
+    const { fullName, phone, street, city, province, postalCode } = this.address;
+    if (!fullName || !phone || !street || !city || !province || !postalCode) {
+      this.errorMessage = 'Please fill in all delivery fields.';
+      return false;
+    }
+    if (!/^\d{10}$/.test(phone.replace(/\s/g, ''))) {
+      this.errorMessage = 'Please enter a valid 10-digit phone number.';
+      return false;
+    }
+    this.errorMessage = '';
+    return true;
   }
 }
