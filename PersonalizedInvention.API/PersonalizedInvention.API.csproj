@@ -31,4 +31,11 @@
     <None Include="Dockerfile" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Include Angular production environment file so it appears in Solution Explorer and can be tracked -->
+    <Content Include="..\personalized-invention\src\environments\environment.prod.ts">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

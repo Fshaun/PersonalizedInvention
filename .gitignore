@@ -377,6 +377,4 @@ appsettings.Development.json
 appsettings.Production.json
 
 # Angular environment files with real keys
-personalized-invention/src/environments/environment.prod.ts
 
-src/environments/environment.prod.ts
