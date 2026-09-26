@@ -10,11 +10,11 @@ using PersonalizedInvention.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ── Database ────────────────────────────────────────────────────────
+// ── Database ─────────────────────────────────────────────────────
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// ── JWT Authentication ───────────────────────────────────────────────
+// ── JWT ──────────────────────────────────────────────────────────
 var jwtKey = builder.Configuration["Jwt:SecretKey"]!;
 builder.Services.AddAuthentication(options =>
 {
@@ -36,14 +36,11 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// ── Dependency Injection ─────────────────────────────────────────────
-// Repositories
+// ── Dependency Injection ─────────────────────────────────────────
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-// Services
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
@@ -51,10 +48,15 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 
-// ── CORS ─────────────────────────────────────────────────────────────
+// ── CORS ─────────────────────────────────────────────────────────
+// Reads allowed origin from environment variable so it works both
+// locally and in production without changing code
+var allowedOrigin = builder.Configuration["AllowedOrigin"]
+                    ?? "http://localhost:4200";
+
 builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngular", policy =>
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins(allowedOrigin)
               .AllowAnyHeader()
               .AllowAnyMethod()));
 
@@ -64,7 +66,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// ── Auto-migrate on startup ──────────────────────────────────────────
+// ── Auto-migrate on startup ──────────────────────────────────────
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -78,7 +80,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAngular");
-app.UseAuthentication();   // ← Must be before UseAuthorization
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
