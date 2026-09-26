@@ -26,4 +26,9 @@
     <ProjectReference Include="..\PersonalizedInvention.Infrastructure\PersonalizedInvention.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Include Dockerfile in the project so it appears in Solution Explorer -->
+    <None Include="Dockerfile" />
+  </ItemGroup>
+
 </Project>
