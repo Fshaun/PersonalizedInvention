@@ -1,5 +1,5 @@
 # Build stage
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 # Copy all project files
@@ -16,10 +16,10 @@ COPY . .
 
 # Build and publish
 RUN dotnet publish PersonalizedInvention.API/PersonalizedInvention.API.csproj \
-	-c Release -o /app/publish
+    -c Release -o /app/publish
 
-# Runtime stage — smaller image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
 
