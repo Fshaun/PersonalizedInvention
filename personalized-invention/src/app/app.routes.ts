@@ -4,16 +4,7 @@ import { CartComponent } from './features/cart/cart.component';
 import { CheckoutComponent } from './features/checkout/checkout.component';
 import { LoginComponent } from './features/auth/login.component';
 import { RegisterComponent } from './features/auth/register.component';
-<<<<<<< HEAD
 import { authGuard } from './core/guards/auth.guard';
-=======
-import { OrdersComponent } from './features/orders/orders.component';
-import { AdminLayoutComponent } from './features/admin/admin-layout.component';
-import { AdminProductsComponent } from './features/admin/admin-products.component';
-import { AdminOrdersComponent } from './features/admin/admin-orders.component';
-import { authGuard } from './core/guards/auth.guard';
-import { adminGuard } from './core/guards/admin.guard';
->>>>>>> beta
 
 export const routes: Routes = [
   { path: '',         component: ProductListComponent },
@@ -22,35 +13,12 @@ export const routes: Routes = [
   {
     path: 'cart',
     component: CartComponent,
-<<<<<<< HEAD
     canActivate: [authGuard]      // ← Redirects to /login if not logged in
-=======
-    canActivate: [authGuard]
->>>>>>> beta
   },
   {
     path: 'checkout',
     component: CheckoutComponent,
-<<<<<<< HEAD
     canActivate: [authGuard]      // ← Redirects to /login if not logged in
-=======
-    canActivate: [authGuard]
-  },
-  {
-    path: 'orders',
-    component: OrdersComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'admin',
-    component: AdminLayoutComponent,
-    canActivate: [adminGuard],          // ← only admins
-    children: [
-      { path: '',         redirectTo: 'products', pathMatch: 'full' },
-      { path: 'products', component: AdminProductsComponent },
-      { path: 'orders',   component: AdminOrdersComponent }
-    ]
->>>>>>> beta
   },
   { path: '**', redirectTo: '' }
 ];

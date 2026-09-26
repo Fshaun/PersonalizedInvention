@@ -66,37 +66,6 @@ namespace PersonalizedInvention.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW()");
 
-<<<<<<< HEAD
-=======
-                    b.Property<string>("DeliveryCity")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("DeliveryCountry")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("DeliveryFullName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("DeliveryPhone")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("DeliveryPostalCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("DeliveryProvince")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("DeliveryStreet")
-                        .IsRequired()
-                        .HasColumnType("text");
-
->>>>>>> beta
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -275,12 +244,6 @@ namespace PersonalizedInvention.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-<<<<<<< HEAD
-=======
-                    b.Property<bool>("IsAdmin")
-                        .HasColumnType("boolean");
-
->>>>>>> beta
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");

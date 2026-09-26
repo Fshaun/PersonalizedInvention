@@ -361,22 +361,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-
-# .gitignore
-
-# User secrets
-**/secrets.json
-
-# Environment files
-.env
-.env.*
-!.env.example
-
-# ASP.NET
-appsettings.Development.json
-appsettings.Production.json
-
-# Angular environment files with real keys
-personalized-invention/src/environments/environment.prod.ts
-
-src/environments/environment.prod.ts

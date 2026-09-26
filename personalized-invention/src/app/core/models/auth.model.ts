@@ -13,10 +13,6 @@ export interface AuthResponse {
   userId: number;
   fullName: string;
   email: string;
-<<<<<<< HEAD
-=======
-  isAdmin: boolean;      // ← new
->>>>>>> beta
   token: string;
   expiresAt: string;
 }
@@ -25,8 +21,4 @@ export interface CurrentUser {
   userId: number;
   fullName: string;
   email: string;
-<<<<<<< HEAD
-=======
-  isAdmin: boolean;      // ← new
->>>>>>> beta
 }
