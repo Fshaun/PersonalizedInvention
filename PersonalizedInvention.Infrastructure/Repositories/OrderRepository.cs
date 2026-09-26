@@ -14,16 +14,27 @@ namespace PersonalizedInvention.Infrastructure.Repositories
 
         public OrderRepository(AppDbContext context) => _context = context;
 
+        // All orders — for admin
+        public async Task<IEnumerable<Order>> GetAllOrdersAsync() =>
+            await _context.Orders
+                .Include(o => o.User)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .OrderByDescending(o => o.CreatedAt)
+                .ToListAsync();
+
+        // Orders for one user
         public async Task<IEnumerable<Order>> GetOrdersByUserIdAsync(int userId) =>
             await _context.Orders
                 .Include(o => o.OrderItems)
-                    .ThenInclude(oi => oi.Product)  // Nested JOIN
+                    .ThenInclude(oi => oi.Product)
                 .Where(o => o.UserId == userId)
                 .OrderByDescending(o => o.CreatedAt)
                 .ToListAsync();
 
         public async Task<Order?> GetByIdAsync(int id) =>
             await _context.Orders
+                .Include(o => o.User)
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
                 .FirstOrDefaultAsync(o => o.Id == id);

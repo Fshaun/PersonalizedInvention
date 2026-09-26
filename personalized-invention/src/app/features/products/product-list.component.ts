@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductService } from '../../core/services/product.service';
+<<<<<<< HEAD
 import { Product } from '../../core/models/product.model';
+=======
+import { PRODUCT_CATEGORIES, Product } from '../../core/models/product.model';
+>>>>>>> beta
 import { ProductCardComponent } from './product-card.component';
 
 @Component({
@@ -35,7 +39,11 @@ export class ProductListComponent implements OnInit {
       next: (products) => {
         this.products = products;
         this.filteredProducts = products;
+<<<<<<< HEAD
         this.categories = ['All', ...new Set(products.map(p => p.category))];
+=======
+        this.categories = ['All', ...PRODUCT_CATEGORIES];
+>>>>>>> beta
         this.isLoading = false;
       },
       error: (err) => {

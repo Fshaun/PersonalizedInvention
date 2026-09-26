@@ -1,0 +1,94 @@
+<div class="pi-orders">
+  <div class="pi-orders__header">
+    <h1>My Orders</h1>
+    <p>Your purchase history</p>
+  </div>
+
+  <!-- Loading -->
+  @if (isLoading) {
+    <div class="pi-orders__state">
+      <div class="pi-spinner"></div>
+      <p>Loading your orders...</p>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (!isLoading && errorMessage) {
+    <div class="pi-orders__state pi-orders__state--error">
+      <p>⚠️ {{ errorMessage }}</p>
+      <button class="pi-btn pi-btn--outline" (click)="loadOrders()">Try Again</button>
+    </div>
+  }
+
+  <!-- Empty state -->
+  @if (!isLoading && !errorMessage && orders.length === 0) {
+    <div class="pi-orders__state pi-orders__state--empty">
+      <div class="pi-orders__empty-icon">📦</div>
+      <h2>No orders yet</h2>
+      <p>Once you make a purchase it will appear here.</p>
+      <button class="pi-btn pi-btn--primary" (click)="goShopping()">
+        Start Shopping
+      </button>
+    </div>
+  }
+
+  <!-- Order list -->
+  @if (!isLoading && orders.length > 0) {
+    <div class="pi-orders__list">
+      @for (order of orders; track order.id) {
+        <div class="pi-order-card">
+
+          <!-- Order header — always visible -->
+          <div class="pi-order-card__header" (click)="toggleDetails(order.id)">
+            <div class="pi-order-card__meta">
+              <span class="pi-order-card__id">Order #{{ order.id }}</span>
+              <span class="pi-order-card__date">
+                {{ order.createdAt | date:'d MMM yyyy, HH:mm' }}
+              </span>
+            </div>
+
+            <div class="pi-order-card__right">
+              <span class="pi-order-card__badge" [ngClass]="getStatusClass(order.status)">
+                {{ order.status }}
+              </span>
+              <span class="pi-order-card__total">
+                R{{ order.totalAmount | number:'1.2-2' }}
+              </span>
+              <span class="pi-order-card__toggle">
+                {{ isExpanded(order.id) ? '▲' : '▼' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Order items — shown when expanded -->
+          @if (isExpanded(order.id)) {
+            <div class="pi-order-card__body">
+              <div class="pi-order-card__items">
+                @for (item of order.orderItems; track item.productId) {
+                  <div class="pi-order-card__item">
+                    <span class="pi-order-card__item-name">{{ item.productName }}</span>
+                    <span class="pi-order-card__item-qty">× {{ item.quantity }}</span>
+                    <span class="pi-order-card__item-price">
+                      R{{ item.unitPrice | number:'1.2-2' }} each
+                    </span>
+                    <span class="pi-order-card__item-subtotal">
+                      R{{ (item.unitPrice * item.quantity) | number:'1.2-2' }}
+                    </span>
+                  </div>
+                }
+              </div>
+
+              <div class="pi-order-card__footer">
+                <span>Total paid</span>
+                <span class="pi-order-card__footer-total">
+                  R{{ order.totalAmount | number:'1.2-2' }}
+                </span>
+              </div>
+            </div>
+          }
+
+        </div>
+      }
+    </div>
+  }
+</div>

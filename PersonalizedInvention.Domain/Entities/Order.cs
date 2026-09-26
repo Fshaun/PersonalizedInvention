@@ -14,6 +14,18 @@ namespace PersonalizedInvention.Domain.Entities
         public string StripePaymentIntentId { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
 
+<<<<<<< HEAD
+=======
+        // ── Delivery address ──────────────────────────────────────
+        public string DeliveryFullName { get; set; } = string.Empty;
+        public string DeliveryPhone { get; set; } = string.Empty;
+        public string DeliveryStreet { get; set; } = string.Empty;
+        public string DeliveryCity { get; set; } = string.Empty;
+        public string DeliveryProvince { get; set; } = string.Empty;
+        public string DeliveryPostalCode { get; set; } = string.Empty;
+        public string DeliveryCountry { get; set; } = "South Africa";
+
+>>>>>>> beta
         public User User { get; set; } = null!;
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }

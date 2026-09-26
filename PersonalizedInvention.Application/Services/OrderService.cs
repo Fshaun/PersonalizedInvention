@@ -37,29 +37,45 @@ namespace PersonalizedInvention.Application.Services
             return order is null ? null : MapToDto(order);
         }
 
+<<<<<<< HEAD
         public async Task<OrderDto> CreateOrderFromCartAsync(int userId)
         {
             // Step 1: get cart items
+=======
+        public async Task<OrderDto> CreateOrderFromCartAsync(int userId, DeliveryAddressDto address)
+        {
+>>>>>>> beta
             var cartItems = (await _cartRepository.GetCartItemsByUserIdAsync(userId)).ToList();
             if (!cartItems.Any())
                 throw new InvalidOperationException("Cart is empty.");
 
+<<<<<<< HEAD
             // Step 2: build order items and calculate total
+=======
+>>>>>>> beta
             var orderItems = cartItems.Select(ci => new OrderItem
             {
                 ProductId = ci.ProductId,
                 Quantity = ci.Quantity,
+<<<<<<< HEAD
                 UnitPrice = ci.Product.Price  // Lock price at time of order
+=======
+                UnitPrice = ci.Product.Price
+>>>>>>> beta
             }).ToList();
 
             var total = orderItems.Sum(oi => oi.UnitPrice * oi.Quantity);
 
+<<<<<<< HEAD
             // Step 3: create the order
+=======
+>>>>>>> beta
             var order = new Order
             {
                 UserId = userId,
                 TotalAmount = total,
                 Status = OrderStatus.Pending,
+<<<<<<< HEAD
                 OrderItems = orderItems
             };
 
@@ -68,6 +84,22 @@ namespace PersonalizedInvention.Application.Services
             // Step 4: clear the cart after order is placed
             await _cartRepository.ClearCartAsync(userId);
 
+=======
+                OrderItems = orderItems,
+
+                // ── Save delivery address ──────────────────────
+                DeliveryFullName = address.FullName,
+                DeliveryPhone = address.Phone,
+                DeliveryStreet = address.Street,
+                DeliveryCity = address.City,
+                DeliveryProvince = address.Province,
+                DeliveryPostalCode = address.PostalCode,
+                DeliveryCountry = address.Country
+            };
+
+            var created = await _orderRepository.CreateAsync(order);
+            await _cartRepository.ClearCartAsync(userId);
+>>>>>>> beta
             return MapToDto(created);
         }
 
@@ -86,6 +118,19 @@ namespace PersonalizedInvention.Application.Services
             TotalAmount = o.TotalAmount,
             Status = o.Status.ToString(),
             CreatedAt = o.CreatedAt,
+<<<<<<< HEAD
+=======
+            DeliveryAddress = new DeliveryAddressDto
+            {
+                FullName = o.DeliveryFullName,
+                Phone = o.DeliveryPhone,
+                Street = o.DeliveryStreet,
+                City = o.DeliveryCity,
+                Province = o.DeliveryProvince,
+                PostalCode = o.DeliveryPostalCode,
+                Country = o.DeliveryCountry
+            },
+>>>>>>> beta
             OrderItems = o.OrderItems.Select(oi => new OrderItemDto
             {
                 ProductId = oi.ProductId,

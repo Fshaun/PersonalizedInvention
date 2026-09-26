@@ -14,7 +14,18 @@
     </a>
 
     @if (currentUser) {
+<<<<<<< HEAD
       <!-- Logged in state -->
+=======
+      <a routerLink="/orders" routerLinkActive="active">My Orders</a>
+
+      @if (currentUser.isAdmin) {
+        <a routerLink="/admin" routerLinkActive="active" class="pi-nav__admin-link">
+          ⚙ Admin
+        </a>
+      }
+
+>>>>>>> beta
       <a routerLink="/cart" routerLinkActive="active" class="pi-nav__cart">
         <span class="pi-nav__cart-icon">🛒</span>
         @if (cartCount > 0) {
@@ -23,6 +34,7 @@
       </a>
 
       <div class="pi-nav__user">
+<<<<<<< HEAD
         <span class="pi-nav__greeting">Hi, {{ currentUser.fullName.split(' ')[0] }}</span>
         <button class="pi-nav__logout" (click)="logout()">Logout</button>
       </div>
@@ -34,6 +46,18 @@
       <a routerLink="/register" class="pi-nav__auth-btn">
         Register
       </a>
+=======
+        <span class="pi-nav__greeting">
+          Hi, {{ currentUser.fullName.split(' ')[0] }}
+        </span>
+        <button class="pi-nav__logout" (click)="logout()">Logout</button>
+      </div>
+    } @else {
+      <a routerLink="/login" routerLinkActive="active" class="pi-nav__auth-link">
+        Sign In
+      </a>
+      <a routerLink="/register" class="pi-nav__auth-btn">Register</a>
+>>>>>>> beta
     }
   </div>
 </nav>

@@ -25,11 +25,17 @@ namespace PersonalizedInvention.Application.Services
 
         public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
         {
+<<<<<<< HEAD
             // Check if email already exists
             if (await _userRepository.EmailExistsAsync(dto.Email))
                 throw new InvalidOperationException("An account with this email already exists.");
 
             // Hash the password — never store plain text passwords
+=======
+            if (await _userRepository.EmailExistsAsync(dto.Email))
+                throw new InvalidOperationException("An account with this email already exists.");
+
+>>>>>>> beta
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
             var user = new User
@@ -37,21 +43,33 @@ namespace PersonalizedInvention.Application.Services
                 FullName = dto.FullName,
                 Email = dto.Email.ToLower().Trim(),
                 PasswordHash = passwordHash,
+<<<<<<< HEAD
+=======
+                IsAdmin = false,
+>>>>>>> beta
                 CreatedAt = DateTime.UtcNow
             };
 
             var created = await _userRepository.CreateAsync(user);
             var token = GenerateJwtToken(created);
+<<<<<<< HEAD
 
+=======
+>>>>>>> beta
             return BuildResponse(created, token);
         }
 
         public async Task<AuthResponseDto> LoginAsync(LoginDto dto)
         {
+<<<<<<< HEAD
             // Find user by email
             var user = await _userRepository.GetByEmailAsync(dto.Email);
 
             // Verify password against stored hash
+=======
+            var user = await _userRepository.GetByEmailAsync(dto.Email);
+
+>>>>>>> beta
             if (user is null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
                 throw new UnauthorizedAccessException("Invalid email or password.");
 
@@ -59,8 +77,11 @@ namespace PersonalizedInvention.Application.Services
             return BuildResponse(user, token);
         }
 
+<<<<<<< HEAD
         // ── Private helpers ───────────────────────────────────────────────
 
+=======
+>>>>>>> beta
         private string GenerateJwtToken(User user)
         {
             var secretKey = _configuration["Jwt:SecretKey"]!;
@@ -71,14 +92,22 @@ namespace PersonalizedInvention.Application.Services
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+<<<<<<< HEAD
             // Claims are pieces of data stored inside the token
             // Angular reads these to know who the user is
+=======
+>>>>>>> beta
             var claims = new[]
             {
             new Claim(JwtRegisteredClaimNames.Sub,   user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(ClaimTypes.Name,               user.FullName),
+<<<<<<< HEAD
             new Claim("userId",                      user.Id.ToString())
+=======
+            new Claim("userId",                      user.Id.ToString()),
+            new Claim("isAdmin",                     user.IsAdmin.ToString().ToLower()) // ← new
+>>>>>>> beta
         };
 
             var token = new JwtSecurityToken(
@@ -97,6 +126,10 @@ namespace PersonalizedInvention.Application.Services
             UserId = user.Id,
             FullName = user.FullName,
             Email = user.Email,
+<<<<<<< HEAD
+=======
+            IsAdmin = user.IsAdmin,    // ← new
+>>>>>>> beta
             Token = token,
             ExpiresAt = DateTime.UtcNow.AddDays(7)
         };

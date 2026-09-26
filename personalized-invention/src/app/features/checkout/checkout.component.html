@@ -1,4 +1,5 @@
 <div class="pi-checkout">
+<<<<<<< HEAD
   <h1>Checkout</h1>
 
   @if (isLoading) {
@@ -36,4 +37,203 @@
       </button>
     </div>
   }
+=======
+
+  <!-- ── Step 1: Delivery Address ─────────────────────────── -->
+  @if (step === 'address') {
+    <div class="pi-checkout__layout">
+
+      <div class="pi-checkout__section">
+        <h1 class="pi-checkout__title">Checkout</h1>
+        <h2 class="pi-checkout__subtitle">Delivery Details</h2>
+
+        @if (errorMessage) {
+          <div class="pi-checkout__error-msg">⚠️ {{ errorMessage }}</div>
+        }
+
+        <div class="pi-form-field">
+          <label>Full Name *</label>
+          <input type="text" [(ngModel)]="address.fullName"
+                 placeholder="Full name" />
+        </div>
+
+        <div class="pi-form-field">
+          <label>Phone Number *</label>
+          <input type="tel" [(ngModel)]="address.phone"
+                 placeholder="e.g. 0812345678" />
+        </div>
+
+        <div class="pi-form-field">
+          <label>Street Address *</label>
+          <input type="text" [(ngModel)]="address.street"
+                 placeholder="e.g. 12 Main Street, Apartment 3" />
+        </div>
+
+        <div class="pi-form-row">
+          <div class="pi-form-field">
+            <label>City *</label>
+            <input type="text" [(ngModel)]="address.city"
+                   placeholder="e.g. Johannesburg" />
+          </div>
+          <div class="pi-form-field">
+            <label>Postal Code *</label>
+            <input type="text" [(ngModel)]="address.postalCode"
+                   placeholder="e.g. 2000" />
+          </div>
+        </div>
+
+        <div class="pi-form-field">
+          <label>Province *</label>
+          <select [(ngModel)]="address.province">
+            <option value="">Select province</option>
+            @for (p of provinces; track p) {
+              <option [value]="p">{{ p }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="pi-form-field">
+          <label>Country</label>
+          <input type="text" [(ngModel)]="address.country" readonly />
+        </div>
+
+        <button class="pi-btn pi-btn--primary pi-btn--full"
+                (click)="proceedToPayment()">
+          Continue to Payment →
+        </button>
+
+        <button class="pi-btn pi-btn--outline pi-btn--full"
+                (click)="router.navigate(['/cart'])">
+          ← Back to Cart
+        </button>
+      </div>
+
+      <!-- Address preview card -->
+      <div class="pi-checkout__preview">
+        <h3>Delivering to</h3>
+        <div class="pi-address-preview">
+          @if (address.fullName) {
+            <p><strong>{{ address.fullName }}</strong></p>
+          }
+          @if (address.phone) {
+            <p>📞 {{ address.phone }}</p>
+          }
+          @if (address.street) {
+            <p>{{ address.street }}</p>
+          }
+          @if (address.city && address.postalCode) {
+            <p>{{ address.city }}, {{ address.postalCode }}</p>
+          }
+          @if (address.province) {
+            <p>{{ address.province }}</p>
+          }
+          <p>{{ address.country }}</p>
+        </div>
+      </div>
+
+    </div>
+  }
+
+  <!-- ── Setting up payment (loading) ─────────────────────── -->
+  @if (step === 'payment' && !cardElement) {
+    <div class="pi-checkout__state">
+      <div class="pi-spinner"></div>
+      <p>Setting up payment...</p>
+    </div>
+  }
+
+  <!-- ── Step 2: Payment ───────────────────────────────────── -->
+  @if (step === 'payment' && cardElement) {
+    <div class="pi-checkout__layout">
+
+      <div class="pi-checkout__section">
+        <h2 class="pi-checkout__subtitle">Payment</h2>
+
+        @if (errorMessage) {
+          <div class="pi-checkout__error-msg">⚠️ {{ errorMessage }}</div>
+        }
+
+        <div class="pi-card-element-wrap">
+          <label>Card Details</label>
+          <div id="stripe-card-element" class="pi-stripe-element"></div>
+        </div>
+
+        <div class="pi-checkout__test-hint">
+          <strong>Test card:</strong> 4242 4242 4242 4242 · any future date · any CVC
+        </div>
+
+        <button class="pi-btn pi-btn--primary pi-btn--full" (click)="pay()">
+          Pay R{{ orderTotal | number:'1.2-2' }}
+        </button>
+
+        <button class="pi-btn pi-btn--outline pi-btn--full"
+                (click)="goBackToAddress()">
+          ← Edit Delivery Address
+        </button>
+
+        <p class="pi-checkout__secure">
+          🔒 Secured by Stripe. We never store your card details.
+        </p>
+      </div>
+
+      <!-- Order summary -->
+      <div class="pi-checkout__preview">
+        <h3>Order Summary</h3>
+        @if (order) {
+          <div class="pi-order-summary">
+            @for (item of order.orderItems; track item.productId) {
+              <div class="pi-order-summary__row">
+                <span>{{ item.productName }} × {{ item.quantity }}</span>
+                <span>R{{ (item.unitPrice * item.quantity) | number:'1.2-2' }}</span>
+              </div>
+            }
+            <div class="pi-order-summary__total">
+              <span>Total</span>
+              <span>R{{ orderTotal | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        }
+
+        <div class="pi-address-confirm">
+          <h4>Delivering to</h4>
+          <p>{{ order?.deliveryAddress?.fullName }}</p>
+          <p>{{ order?.deliveryAddress?.street }}</p>
+          <p>{{ order?.deliveryAddress?.city }}, {{ order?.deliveryAddress?.postalCode }}</p>
+          <p>{{ order?.deliveryAddress?.phone }}</p>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ── Processing ────────────────────────────────────────── -->
+  @if (step === 'processing') {
+    <div class="pi-checkout__state">
+      <div class="pi-spinner"></div>
+      <p>Processing your payment...</p>
+    </div>
+  }
+
+  <!-- ── Success ───────────────────────────────────────────── -->
+  @if (step === 'success') {
+    <div class="pi-checkout__state pi-checkout__state--success">
+      <div class="pi-checkout__icon">🎉</div>
+      <h2>Order Confirmed!</h2>
+      <p>Your payment was successful. Redirecting to your orders...</p>
+    </div>
+  }
+
+  <!-- ── Error ─────────────────────────────────────────────── -->
+  @if (step === 'error') {
+    <div class="pi-checkout__state pi-checkout__state--error">
+      <div class="pi-checkout__icon">⚠️</div>
+      <h2>Something went wrong</h2>
+      <p>{{ errorMessage }}</p>
+      <button class="pi-btn pi-btn--primary"
+              (click)="router.navigate(['/cart'])">
+        Back to Cart
+      </button>
+    </div>
+  }
+
+>>>>>>> beta
 </div>

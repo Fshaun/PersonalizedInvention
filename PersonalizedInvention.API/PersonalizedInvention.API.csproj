@@ -4,6 +4,10 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+<<<<<<< HEAD
+=======
+    <UserSecretsId>047c7569-f54b-4d5a-b4f2-29d29edad793</UserSecretsId>
+>>>>>>> beta
   </PropertyGroup>
 
   <ItemGroup>
